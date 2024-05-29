@@ -1,6 +1,9 @@
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using BackOffice.Data;
+using BackOffice.Entities;
+using BackOffice.Repos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +11,19 @@ using Microsoft.Extensions.ObjectPool;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 
+
 namespace BackOffice.Controllers
 {
 
     //AuthController GetToken
     // User Login  
 
-    [Authorize]
+
+    /// <summary>
+    ///  EF => ADONET GELİŞTİRMESİDİR.
+    /// </summary>
+
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -23,6 +32,7 @@ namespace BackOffice.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+
             //swagger request response mı bileyim. Cuma
 
             //İçerisine parametre olarak action alan bir method yav ve o metodu kullan.Cuma
@@ -51,11 +61,25 @@ namespace BackOffice.Controllers
 
             //   System.Console.WriteLine("control"+control);
 
+            // Connected mimari, disconnect 
 
-            var result = DbData.UserList;
+            // connection | command & query | execute
+
+
+            // ORM => EFCORE             
+            var repo = new UserRepo();
+            var result = repo.GetAll();
 
             return Ok(result);
         }
+           [HttpGet("GetWithEf")]
+        public IActionResult GetWithEf()
+        {
+            var repo = new UserRepo();
+            var list = repo.GetAll();
+            return Ok(list);
+        }
+
 
 
         // api/Users/{id}
@@ -73,18 +97,24 @@ namespace BackOffice.Controllers
             return Ok(user);
         }
 
+
+     
+
+
         //api/Users/GetByFirstName?firstname=Yavuz
         [HttpGet("GetByFirstName")]
-        public IActionResult GetByFirstName(string firstname)
+        public IActionResult GetByFirstName(string name)
         {
-            var user = DbData.UserList.FirstOrDefault(x => x.Firstname == firstname);
+            var user = DbData.UserList.FirstOrDefault(x => x.Name == name);
             if (user == null)
             {
-                return NotFound("Böyle bir user bulunamadı, id =" + firstname);
+                return NotFound("Böyle bir user bulunamadı, id =" + name);
             }
 
             return Ok(user);
         }
+
+
 
         //FROMBODY state management
         [HttpPost]
@@ -101,8 +131,8 @@ namespace BackOffice.Controllers
             var updatedUser = DbData.UserList.FirstOrDefault(x => x.Id == user.Id);
             if (updatedUser == null)
                 return NotFound("" + user.Id);
-            updatedUser.Firstname = user.Firstname;
-            updatedUser.Lastname = user.Lastname;
+            updatedUser.Name = user.Name;
+            updatedUser.Surname = user.Surname;
 
             return NoContent();
         }
@@ -115,7 +145,7 @@ namespace BackOffice.Controllers
             if (updatedUser == null)
                 return NotFound();
 
-            updatedUser.Firstname = user.Firstname;
+            updatedUser.Name = user.Name;
             return NoContent();
         }
 
@@ -154,7 +184,7 @@ namespace BackOffice.Controllers
 
             var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YavuzyavuzyavuzA.YavuzyavuzyavuzAYavuzyavuzyavuzA.YavuzyavuzyavuzA")), SecurityAlgorithms.HmacSha256);
 
-        
+
 
 
             var jwtToken = new JwtSecurityToken(issuer: "http://localhost", audience: "http://localhost", claims: null, notBefore: DateTime.UtcNow, expires: DateTime.UtcNow.AddDays(30), signingCredentials: signingCredentials);
