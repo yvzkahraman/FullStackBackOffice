@@ -1,10 +1,11 @@
 using System.Data.SqlClient;
 using BackOffice.Data;
 using BackOffice.Entities;
+using BackOffice.Interfaces;
 
 namespace BackOffice.Repos
 {
-    public class UserRepo
+    public class UserRepo :IRepo
     {
 
         public List<AppUser> GetAll()
@@ -14,7 +15,7 @@ namespace BackOffice.Repos
 
 
             SqlConnection connection = new SqlConnection(
-                       "server=.; database=ReactBootcampDb; user id=sa; password=<YourStrong@Passw0rd>"
+                       "server=.; database=ReactBootcampDb2; user id=sa; password=<YourStrong@Passw0rd>"
                    );
 
             SqlCommand command = new SqlCommand();
@@ -28,6 +29,7 @@ namespace BackOffice.Repos
             connection.Open();
 
             var reader = command.ExecuteReader();
+            // command.ExecuteNonQuery();
 
             while (reader.Read())
             {

@@ -1,6 +1,11 @@
+using System.Formats.Tar;
 using System.Text;
+using BackOffice;
+using BackOffice.Interfaces;
+using BackOffice.Repos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +26,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YavuzyavuzyavuzA.YavuzyavuzyavuzAYavuzyavuzyavuzA.YavuzyavuzyavuzA"))
     };
 });
+
+builder.Services.AddDbContext<ReactDbContext>(opt=>{
+    opt.UseSqlServer("server=.; database=ReactBootcampDb2; user id=sa; password=<YourStrong@Passw0rd>;TrustServerCertificate=true;");
+});
+builder.Services.AddScoped<IRepo,UserEfRepo>();
+
+// builder.Services.AddScoped<IRepo, UserRepo>();
 
 
 builder.Services.AddControllers();

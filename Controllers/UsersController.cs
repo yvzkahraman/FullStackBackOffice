@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using BackOffice.Data;
 using BackOffice.Entities;
+using BackOffice.Interfaces;
 using BackOffice.Repos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -28,55 +29,31 @@ namespace BackOffice.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
+        // DI 
+
+        private readonly IRepo repo;
+        public UsersController(IRepo repo)
+        {
+            this.repo = repo;
+        }
 
         [HttpGet]
         public IActionResult Get()
         {
 
-            //swagger request response mı bileyim. Cuma
-
-            //İçerisine parametre olarak action alan bir method yav ve o metodu kullan.Cuma
+           
 
 
-            //burayı aynen yazıyorsun zipleyip teslim pazar()
-
-            // alışverişe çıktın eline bir sepet  => a markası süt 1 lt
-            // eliine bir sepet => a markası süt 1lt 
-
-            // senle bu adam yanı  ? 
-
-
-            // AppUser user = new AppUser();
-
-            // user.Username = "yavuz";
-            // user.Password = "2";
-
-
-            // AppUser user1 = new AppUser();
-            // user1.Username = "yavuz";
-            // user1.Password = "1";
-
-
-            // var control = user.Equals(user1);
-
-            //   System.Console.WriteLine("control"+control);
-
-            // Connected mimari, disconnect 
-
-            // connection | command & query | execute
-
-
-            // ORM => EFCORE             
-            var repo = new UserRepo();
-            var result = repo.GetAll();
+            var result = this.repo.GetAll();
 
             return Ok(result);
         }
-           [HttpGet("GetWithEf")]
+
+        
+        [HttpGet("GetWithEf")]
         public IActionResult GetWithEf()
         {
-            var repo = new UserRepo();
-            var list = repo.GetAll();
+            var list = this.repo.GetAll();
             return Ok(list);
         }
 
@@ -98,7 +75,7 @@ namespace BackOffice.Controllers
         }
 
 
-     
+
 
 
         //api/Users/GetByFirstName?firstname=Yavuz
